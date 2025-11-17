@@ -1,11 +1,10 @@
+import { useCallback, useMemo } from "react";
 import useApi from "@/components/generic-components/hooks/useApi";
-import { Manager, CreateManagerData, UpdateManagerData, ManagerQueryParams } from "@/types";
 
 const useManagersApi = () => {
   const api = useApi();
-  const baseUrl = "/api/managers";
 
-  const buildQueryString = (params: ManagerQueryParams): string => {
+  const buildQueryString = useCallback((params: ManagerQueryParams): string => {
     const searchParams = new URLSearchParams();
 
     if (params.search) searchParams.append("search", params.search);
@@ -13,24 +12,44 @@ const useManagersApi = () => {
 
     const queryString = searchParams.toString();
     return queryString ? `?${queryString}` : "";
-  };
+  }, []);
 
-  return {
-    getManagers: (params: ManagerQueryParams = {}) =>
-      api.get<Manager[]>(`${baseUrl}${buildQueryString(params)}`),
+  const getManagers = useCallback(
+    (params: ManagerQueryParams = {}) =>
+      api.get<Manager[]>(`/api/managers${buildQueryString(params)}`),
+    [api, buildQueryString]
+  );
 
-    getManager: (id: string) => api.get<Manager>(`${baseUrl}/${id}`),
+  const getManager = useCallback((id: string) => api.get<Manager>(`/api/managers/${id}`), [api]);
 
-    createManager: (data: CreateManagerData) => api.post<Manager>(baseUrl, data),
+  const createManager = useCallback(
+    (data: CreateManagerData) => api.post<Manager>("/api/managers", data),
+    [api]
+  );
 
-    updateManager: (id: string, data: UpdateManagerData) =>
-      api.put<Manager>(`${baseUrl}/${id}`, data),
+  const updateManager = useCallback(
+    (id: string, data: UpdateManagerData) => api.put<Manager>(`/api/managers/${id}`, data),
+    [api]
+  );
 
-    deleteManager: (id: string) => api.delete<void>(`${baseUrl}/${id}`),
+  const deleteManager = useCallback((id: string) => api.delete<void>(`/api/managers/${id}`), [api]);
 
-    getManagerByEmail: (email: string) =>
-      api.get<Manager>(`${baseUrl}/email/${encodeURIComponent(email)}`),
-  };
+  const getManagerByEmail = useCallback(
+    (email: string) => api.get<Manager>(`/api/managers/email/${encodeURIComponent(email)}`),
+    [api]
+  );
+
+  return useMemo(
+    () => ({
+      getManagers,
+      getManager,
+      createManager,
+      updateManager,
+      deleteManager,
+      getManagerByEmail,
+    }),
+    [getManagers, getManager, createManager, updateManager, deleteManager, getManagerByEmail]
+  );
 };
 
 export default useManagersApi;

@@ -1,11 +1,10 @@
+import { useCallback, useMemo } from "react";
 import useApi from "@/components/generic-components/hooks/useApi";
-import { Booking, CreateBookingData, UpdateBookingData, BookingQueryParams } from "@/types";
 
 const useBookingsApi = () => {
   const api = useApi();
-  const baseUrl = "/api/bookings";
 
-  const buildQueryString = (params: BookingQueryParams): string => {
+  const buildQueryString = useCallback((params: BookingQueryParams): string => {
     const searchParams = new URLSearchParams();
 
     if (params.room_id) searchParams.append("room_id", params.room_id);
@@ -15,21 +14,38 @@ const useBookingsApi = () => {
 
     const queryString = searchParams.toString();
     return queryString ? `?${queryString}` : "";
-  };
+  }, []);
 
-  return {
-    getBookings: (params: BookingQueryParams = {}) =>
-      api.get<Booking[]>(`${baseUrl}${buildQueryString(params)}`),
+  const getBookings = useCallback(
+    (params: BookingQueryParams = {}) =>
+      api.get<Booking[]>(`/api/bookings${buildQueryString(params)}`),
+    [api, buildQueryString]
+  );
 
-    getBooking: (id: string) => api.get<Booking>(`${baseUrl}/${id}`),
+  const getBooking = useCallback((id: string) => api.get<Booking>(`/api/bookings/${id}`), [api]);
 
-    createBooking: (data: CreateBookingData) => api.post<Booking>(baseUrl, data),
+  const createBooking = useCallback(
+    (data: CreateBookingData) => api.post<Booking>("/api/bookings", data),
+    [api]
+  );
 
-    updateBooking: (id: string, data: UpdateBookingData) =>
-      api.put<Booking>(`${baseUrl}/${id}`, data),
+  const updateBooking = useCallback(
+    (id: string, data: UpdateBookingData) => api.put<Booking>(`/api/bookings/${id}`, data),
+    [api]
+  );
 
-    deleteBooking: (id: string) => api.delete<void>(`${baseUrl}/${id}`),
-  };
+  const deleteBooking = useCallback((id: string) => api.delete<void>(`/api/bookings/${id}`), [api]);
+
+  return useMemo(
+    () => ({
+      getBookings,
+      getBooking,
+      createBooking,
+      updateBooking,
+      deleteBooking,
+    }),
+    [getBookings, getBooking, createBooking, updateBooking, deleteBooking]
+  );
 };
 
 export default useBookingsApi;

@@ -1,32 +1,51 @@
+import { useCallback, useMemo } from "react";
 import useApi from "@/components/generic-components/hooks/useApi";
-import { Location, CreateLocationData, UpdateLocationData, LocationQueryParams } from "@/types";
 
 const useLocationsApi = () => {
   const api = useApi();
-  const baseUrl = "/api/locations";
 
-  const buildQueryString = (params: LocationQueryParams): string => {
+  const buildQueryString = useCallback((params: LocationQueryParams): string => {
     const searchParams = new URLSearchParams();
 
     if (params.search) searchParams.append("search", params.search);
 
     const queryString = searchParams.toString();
     return queryString ? `?${queryString}` : "";
-  };
+  }, []);
 
-  return {
-    getLocations: (params: LocationQueryParams = {}) =>
-      api.get<Location[]>(`${baseUrl}${buildQueryString(params)}`),
+  const getLocations = useCallback(
+    (params: LocationQueryParams = {}) =>
+      api.get<Location[]>(`/api/locations${buildQueryString(params)}`),
+    [api, buildQueryString]
+  );
 
-    getLocation: (id: string) => api.get<Location>(`${baseUrl}/${id}`),
+  const getLocation = useCallback((id: string) => api.get<Location>(`/api/locations/${id}`), [api]);
 
-    createLocation: (data: CreateLocationData) => api.post<Location>(baseUrl, data),
+  const createLocation = useCallback(
+    (data: CreateLocationData) => api.post<Location>("/api/locations", data),
+    [api]
+  );
 
-    updateLocation: (id: string, data: UpdateLocationData) =>
-      api.put<Location>(`${baseUrl}/${id}`, data),
+  const updateLocation = useCallback(
+    (id: string, data: UpdateLocationData) => api.put<Location>(`/api/locations/${id}`, data),
+    [api]
+  );
 
-    deleteLocation: (id: string) => api.delete<void>(`${baseUrl}/${id}`),
-  };
+  const deleteLocation = useCallback(
+    (id: string) => api.delete<void>(`/api/locations/${id}`),
+    [api]
+  );
+
+  return useMemo(
+    () => ({
+      getLocations,
+      getLocation,
+      createLocation,
+      updateLocation,
+      deleteLocation,
+    }),
+    [getLocations, getLocation, createLocation, updateLocation, deleteLocation]
+  );
 };
 
 export default useLocationsApi;
