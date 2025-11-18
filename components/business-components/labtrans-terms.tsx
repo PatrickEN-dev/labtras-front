@@ -9,12 +9,10 @@ interface LabTransTermsProps {
 
 export function LabTransTerms({ variant = "link", className = "" }: LabTransTermsProps) {
   const handleAccept = () => {
-    console.log("Termos aceitos");
     localStorage.setItem("termos-aceitos", new Date().toISOString());
   };
 
   const handleCancel = () => {
-    console.log("Termos rejeitados");
   };
 
   const triggerElement =

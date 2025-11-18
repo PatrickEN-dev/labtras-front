@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import { getMockBookings, MOCK_BOOKINGS, createMockBooking, type Booking } from "@/lib/mock-data";
 import useApi from "@/components/generic-components/hooks/useApi";
 
 interface BookingQueryParams {
@@ -40,31 +39,7 @@ const useBookingsApi = () => {
         const bookings = await api.get<Booking[]>(`/bookings${buildQueryString(params)}`);
         return bookings;
       } catch (error) {
-        console.warn("Erro na API real, usando dados mockados:", error);
-
-        let bookings = await getMockBookings();
-
-        if (params.room_id) {
-          bookings = bookings.filter((booking: Booking) => booking.room === params.room_id);
-        }
-
-        if (params.manager_id) {
-          bookings = bookings.filter((booking: Booking) => booking.manager === params.manager_id);
-        }
-
-        if (params.start_date) {
-          bookings = bookings.filter(
-            (booking: Booking) => new Date(booking.start_date) >= new Date(params.start_date!)
-          );
-        }
-
-        if (params.end_date) {
-          bookings = bookings.filter(
-            (booking: Booking) => new Date(booking.end_date) <= new Date(params.end_date!)
-          );
-        }
-
-        return bookings;
+        return [];
       }
     },
     [api]
@@ -76,13 +51,7 @@ const useBookingsApi = () => {
         const booking = await api.get<Booking>(`/bookings/${id}/`);
         return booking;
       } catch (error) {
-        console.warn("Erro na API real, usando dados mockados:", error);
-
-        const booking = MOCK_BOOKINGS.find((b: Booking) => b.id === id);
-        if (!booking) {
-          throw new Error("Booking not found");
-        }
-        return booking;
+        throw new Error("Booking não encontrado na API");
       }
     },
     [api]
@@ -94,13 +63,7 @@ const useBookingsApi = () => {
         const booking = await api.post<Booking>("/bookings/", data);
         return booking;
       } catch (error) {
-        console.warn("Erro na API real, usando dados mockados:", error);
-
-        const bookingData = {
-          ...data,
-          coffee_option: data.coffee_option ?? false,
-        };
-        return await createMockBooking(bookingData);
+        throw new Error("Não foi possível criar o booking");
       }
     },
     [api]
@@ -112,14 +75,7 @@ const useBookingsApi = () => {
         const booking = await api.put<Booking>(`/bookings/${id}/`, data);
         return booking;
       } catch (error) {
-        console.warn("Erro na API real, usando dados mockados:", error);
-
-        const booking = MOCK_BOOKINGS.find((b: Booking) => b.id === id);
-        if (!booking) {
-          throw new Error("Booking not found");
-        }
-        const updatedBooking = { ...booking, ...data, updated_at: new Date().toISOString() };
-        return updatedBooking;
+        throw new Error("Não foi possível atualizar o booking");
       }
     },
     [api]
@@ -130,13 +86,7 @@ const useBookingsApi = () => {
       try {
         await api.delete<void>(`/bookings/${id}/`);
       } catch (error) {
-        console.warn("Erro na API real, usando dados mockados:", error);
-
-        const index = MOCK_BOOKINGS.findIndex((b: Booking) => b.id === id);
-        if (index === -1) {
-          throw new Error("Booking not found");
-        }
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        throw new Error("Não foi possível deletar o booking");
       }
     },
     [api]

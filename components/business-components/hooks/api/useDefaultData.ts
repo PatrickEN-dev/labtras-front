@@ -38,7 +38,6 @@ const useDefaultData = () => {
         },
       };
     } catch (error) {
-      console.warn("API não disponível, usando dados mockados:", error);
 
       // Fallback para dados mockados
       return {

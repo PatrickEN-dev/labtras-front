@@ -30,15 +30,12 @@ const useLocationsApi = () => {
           `/locations${buildQueryString(params)}/`
         );
         if (realLocations && realLocations.length > 0) {
-          console.log("Usando dados reais da API para locations");
           return realLocations;
         }
       } catch (error) {
-        console.warn("API não disponível, usando dados mockados:", error);
       }
 
       // Fallback para dados mockados
-      console.log("Usando dados mockados para locations");
       let locations = await getMockLocations();
 
       if (params.search) {
@@ -54,7 +51,6 @@ const useLocationsApi = () => {
 
   const getLocation = useCallback(
     async (id: string): Promise<MockLocation> => {
-      console.log("Buscando location:", id);
 
       const mockLocation = MOCK_LOCATIONS.find((l) => l.id === id);
       if (mockLocation) {
@@ -75,11 +71,9 @@ const useLocationsApi = () => {
     async (data: CreateLocationData): Promise<MockLocation> => {
       try {
         // Tentar criar via API real
-        console.log("Criando location via API real:", data);
         const newLocation = await api.post<MockLocation>("/locations/", data);
         return newLocation;
       } catch {
-        console.warn("Erro ao criar location via API, simulando criação:");
         // Fallback - simular criação
         const newLocation: MockLocation = {
           id: `loc-${Date.now()}`,

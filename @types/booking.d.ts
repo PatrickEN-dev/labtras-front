@@ -1,21 +1,31 @@
-interface Booking extends BaseEntity {
-  room: string;
-  manager: string;
+interface Room {
+  id: string;
+  name: string;
+  capacity: number;
+  location_id: string;
+}
+
+interface Manager {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface Booking {
+  id: string;
+  room_id: string;
+  manager_id: string;
+  name: string;
+  description: string;
   start_date: string;
   end_date: string;
-  name?: string;
-  description?: string;
-  purpose?: string;
   coffee_option: boolean;
-  coffee_quantity?: number;
-  coffee_description?: string;
-  room_name?: string;
-  room_location?: string;
-  manager_name?: string;
-  manager_email?: string;
-  room_id?: string;
-  manager_id?: string;
-  status?: string;
+  coffee_quantity: number;
+  coffee_description: string | null;
+  created_at: string;
+  updated_at: string;
+  room: Room;
+  manager: Manager;
 }
 
 interface CreateBookingData {
@@ -37,16 +47,6 @@ interface BookingQueryParams {
   end_date?: string;
 }
 
-interface Booking extends BookingCreatePayload {
-  id: string;
-  room_id: string;
-  room_name: string;
-  manager_id: string;
-  manager_name: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
 interface BookingFormData {
   locationId: string;
   roomId: string;

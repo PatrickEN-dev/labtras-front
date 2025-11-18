@@ -37,14 +37,11 @@ const useManagersApi = () => {
 
         // Se há dados reais, usar apenas eles
         if (realManagers && realManagers.length > 0) {
-          console.log("Usando dados reais da API para managers");
           return realManagers;
         }
       } catch (error) {
-        console.warn("API não disponível, usando dados mockados:", error);
       }
 
-      console.log("Usando dados mockados para managers (primeira vez)");
       const managers = await getMockManagers();
 
       if (params.search) {
@@ -73,7 +70,6 @@ const useManagersApi = () => {
         const manager = await api.get<Manager>(`/managers/${id}/`);
         return manager;
       } catch (error) {
-        console.warn("Erro na API real, usando dados mockados:", error);
         // Fallback para dados mockados
         const manager = MOCK_MANAGERS.find((m: Manager) => m.id === id);
         if (!manager) {
@@ -89,11 +85,9 @@ const useManagersApi = () => {
     async (data: CreateManagerData): Promise<Manager> => {
       try {
         // Tentar criar via API real
-        console.log("Criando manager via API real:", data);
         const newManager = await api.post<Manager>("/managers/", data);
         return newManager;
       } catch (error) {
-        console.warn("Erro ao criar manager via API, simulando criação:", error);
         // Fallback - simular criação
         const newManager: Manager = {
           id: `mgr-${Date.now()}`,

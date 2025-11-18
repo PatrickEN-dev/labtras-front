@@ -88,14 +88,6 @@ const useSmartBookingCreation = () => {
             : "",
         };
 
-        console.log("Criando booking com dados:", {
-          locationUsed: actualLocationId,
-          roomUsed: actualRoomId,
-          managerUsed: actualManagerId,
-          usedDefaults,
-          bookingData,
-        });
-
         const booking = await api.post("/bookings/", bookingData);
 
         return {
@@ -103,7 +95,6 @@ const useSmartBookingCreation = () => {
           usedDefaults,
         };
       } catch (error) {
-        console.error("Erro ao criar booking com recursos:", error);
         throw error;
       }
     },

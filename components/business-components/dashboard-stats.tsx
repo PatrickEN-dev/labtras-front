@@ -3,7 +3,7 @@ import { StatsCard } from "@/components/generic-components/stats-card";
 import { Clock, MapPin, Users, Coffee } from "lucide-react";
 import useBookingsApi from "./hooks/api/useBookingsApi";
 import useRoomsApi from "./hooks/api/useRoomsApi";
-import type { Booking, Room } from "@/lib/mock-data";
+import type { Room } from "@/lib/mock-data";
 
 interface DashboardStatsData {
   meetingsToday: number;
@@ -13,13 +13,12 @@ interface DashboardStatsData {
   coffeeOrders: number;
 }
 
-// Funções auxiliares para cálculos
 const getTodayDateString = (): string => {
   return new Date().toISOString().split("T")[0];
 };
 
 const calculateActiveParticipants = (bookings: Booking[]): number => {
-  return bookings.length * 4; // Estimativa de 4 pessoas por reunião
+  return bookings.length * 4;
 };
 
 const calculateCoffeeOrders = (bookings: Booking[]): number => {
@@ -36,7 +35,7 @@ const getCurrentActiveBookings = (bookings: Booking[]): Booking[] => {
 };
 
 const calculateAvailableRooms = (totalRooms: Room[], activeBookings: Booking[]): number => {
-  const busyRoomsIds = new Set(activeBookings.map((booking) => booking.room));
+  const busyRoomsIds = new Set(activeBookings.map((booking) => booking.room_id));
   return Math.max(0, totalRooms.length - busyRoomsIds.size);
 };
 
@@ -86,7 +85,6 @@ export function DashboardStats() {
           coffeeOrders,
         });
       } catch (err) {
-        console.error("Erro ao carregar estatísticas do dashboard:", err);
         setError("Erro ao carregar dados");
       } finally {
         setIsLoading(false);

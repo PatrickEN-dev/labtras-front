@@ -43,15 +43,12 @@ const useRoomsApi = () => {
 
         // Se há dados reais, usar apenas eles
         if (realRooms && realRooms.length > 0) {
-          console.log("Usando dados reais da API para rooms");
           return realRooms;
         }
       } catch (error) {
-        console.warn("API não disponível, usando dados mockados:", error);
       }
 
       // Fallback para dados mockados se API falhou ou não tem dados
-      console.log("Usando dados mockados para rooms (primeira vez)");
       let rooms: Room[];
 
       if (params.location_id) {
@@ -79,7 +76,6 @@ const useRoomsApi = () => {
         const room = await api.get<Room>(`/rooms/${id}/`);
         return room;
       } catch (error) {
-        console.warn("Erro na API real, usando dados mockados:", error);
 
         const room = MOCK_ROOMS.find((r) => r.id === id);
         if (!room) {
@@ -94,11 +90,9 @@ const useRoomsApi = () => {
   const createRoom = useCallback(
     async (data: CreateRoomData): Promise<Room> => {
       try {
-        console.log("Criando room via API real:", data);
         const newRoom = await api.post<Room>("/rooms/", data);
         return newRoom;
       } catch (error) {
-        console.warn("Erro ao criar room via API, simulando criação:", error);
 
         const newRoom: Room = {
           id: `room-${Date.now()}`,
@@ -126,7 +120,6 @@ const useRoomsApi = () => {
   );
 
   const deleteRoom = useCallback(async (id: string): Promise<void> => {
-    console.log("Deleting room:", id);
     return new Promise((resolve) => setTimeout(() => resolve(), 200));
   }, []);
 

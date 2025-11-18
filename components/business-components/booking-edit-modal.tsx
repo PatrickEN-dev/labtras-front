@@ -53,16 +53,15 @@ export function BookingEditModal({ open, onClose, booking }: BookingEditModalPro
       const endDate = new Date(booking.end_date);
 
       form.reset({
-        locationId: booking.room_location || "",
+        locationId: "",
         customLocation: "",
-        roomId: booking.room,
+        roomId: booking.room_id,
         date: startDate.toISOString().split("T")[0],
         startTime: startDate.toTimeString().slice(0, 5),
         endTime: endDate.toTimeString().slice(0, 5),
-        managerId: booking.manager,
+        managerId: booking.manager_id,
         name: booking.name || "",
         description: booking.description || "",
-        purpose: booking.purpose || "",
         hasRefreshments: booking.coffee_option,
         refreshmentQuantity: booking.coffee_quantity || 0,
         refreshmentDescription: booking.coffee_description || "",
@@ -101,8 +100,22 @@ export function BookingEditModal({ open, onClose, booking }: BookingEditModalPro
   });
 
   const filteredRoomsByLocation = useMemo(() => {
-    if (!locationId) return rooms;
-    return rooms.filter((r) => r.location === locationId);
+    if (!locationId) return [];
+
+    const filtered = rooms.filter((r) => {
+      const matches =
+        r.location === locationId ||
+        (r as any).location_id === locationId ||
+        (r as any).location?.id === locationId;
+
+      return matches;
+    });
+
+    if (filtered.length === 0 && rooms.length > 0) {
+      return rooms;
+    }
+
+    return filtered;
   }, [rooms, locationId]);
 
   const handleSubmit = useCallback(async () => {
@@ -113,8 +126,6 @@ export function BookingEditModal({ open, onClose, booking }: BookingEditModalPro
 
       const isValid = await form.trigger();
       if (!isValid) {
-        const errors = form.formState.errors;
-        console.log("Erros de validação:", errors);
         toast.error("Preencha todos os campos obrigatórios corretamente");
         return;
       }

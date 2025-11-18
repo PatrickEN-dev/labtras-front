@@ -21,12 +21,14 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import useBookingsApi from "@/components/business-components/hooks/api/useBookingsApi";
 
+type BookingType = Booking;
+
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<BookingType[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+  const [editingBooking, setEditingBooking] = useState<BookingType | null>(null);
   const [bookingToDelete, setBookingToDelete] = useState<string | null>(null);
 
   const bookingsApi = useBookingsApi();
@@ -37,7 +39,6 @@ export default function BookingsPage() {
       const data = await bookingsApi.getBookings();
       setBookings(data);
     } catch (error) {
-      console.error("Erro ao carregar reservas:", error);
       toast.error("Erro ao carregar reservas");
     } finally {
       setLoading(false);
@@ -58,7 +59,7 @@ export default function BookingsPage() {
     loadBookings();
   };
 
-  const handleEditBooking = (booking: Booking) => {
+  const handleEditBooking = (booking: BookingType) => {
     setEditingBooking(booking);
     setIsEditModalOpen(true);
   };
@@ -78,7 +79,6 @@ export default function BookingsPage() {
       setBookingToDelete(null);
       loadBookings();
     } catch (error) {
-      console.error("Erro ao excluir reserva:", error);
       toast.error("Erro ao excluir reserva");
     }
   };
@@ -91,7 +91,7 @@ export default function BookingsPage() {
     };
   };
 
-  const getBookingStatus = (booking: Booking) => {
+  const getBookingStatus = (booking: BookingType) => {
     const now = new Date();
     const startDate = new Date(booking.start_date);
     const endDate = new Date(booking.end_date);
@@ -203,15 +203,14 @@ export default function BookingsPage() {
           <Card>
             <CardContent className="p-8 text-center">
               <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Nenhum agendamento marcado ainda
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma reserva encontrada</h3>
               <p className="text-gray-600 mb-4">
-                Você ainda não criou nenhuma reserva de sala. Comece agora mesmo!
+                Não há reservas disponíveis no momento. Isso pode ser porque a API está indisponível
+                ou não há dados cadastrados.
               </p>
               <Button onClick={handleCreateBooking} className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
-                Criar primeira reserva
+                Nova Reserva
               </Button>
             </CardContent>
           </Card>
@@ -232,38 +231,54 @@ export default function BookingsPage() {
                         >
                           {status.label}
                         </span>
-                        <h3 className="text-lg font-semibold text-gray-900">{booking.room_name}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {booking.name || "Reunião sem título"}
+                        </h3>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600">
+                      {booking.description && (
+                        <p className="text-sm text-gray-700 mb-4 bg-gray-50 p-3 rounded-lg">
+                          {booking.description}
+                        </p>
+                      )}
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600 mb-3">
                         <div className="flex items-center gap-2">
                           <MapPin className="h-4 w-4" />
-                          <span>{booking.room_location}</span>
+                          <div>
+                            <p className="font-medium">{booking.room.name}</p>
+                            <p className="text-xs text-gray-500">
+                              Capacidade: {booking.room.capacity} pessoas
+                            </p>
+                          </div>
                         </div>
 
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4" />
-                          <span>{booking.manager_name}</span>
+                          <div>
+                            <p className="font-medium">{booking.manager.name}</p>
+                            <p className="text-xs text-gray-500">{booking.manager.email}</p>
+                          </div>
                         </div>
 
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
-                          <span>{startDateTime.date}</span>
+                          <span className="font-medium">{startDateTime.date}</span>
                         </div>
 
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4" />
-                          <span>
+                          <span className="font-medium">
                             {startDateTime.time} - {endDateTime.time}
                           </span>
                         </div>
                       </div>
 
                       {booking.coffee_option && (
-                        <div className="mt-3 flex items-center gap-2 text-sm text-orange-600">
+                        <div className="flex items-center gap-2 text-sm text-orange-600 bg-orange-50 p-2 rounded-lg">
                           <Coffee className="h-4 w-4" />
                           <span>
-                            Coffee break para {booking.coffee_quantity} pessoas
+                            Coffee break para {booking.coffee_quantity || 1} pessoas
                             {booking.coffee_description && ` - ${booking.coffee_description}`}
                           </span>
                         </div>

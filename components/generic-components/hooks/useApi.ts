@@ -18,7 +18,6 @@ const useApi = () => {
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error("API Error Response:", errorText);
           throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
@@ -30,7 +29,6 @@ const useApi = () => {
 
         return JSON.parse(responseText) as T;
       } catch (error) {
-        console.error("API request failed:", error);
         throw error;
       }
     },

@@ -70,7 +70,6 @@ export function BookingModal({ open, onClose }: BookingModalProps) {
 
         setLoaded(true);
       } catch (error) {
-        console.error("Erro ao carregar dados:", error);
         toast.error("Erro ao carregar dados. Tente novamente.");
       }
     };
@@ -84,8 +83,24 @@ export function BookingModal({ open, onClose }: BookingModalProps) {
   });
 
   const filteredRoomsByLocation = useMemo(() => {
-    if (!locationId) return [];
-    return rooms.filter((r) => r.location === locationId);
+    if (!locationId) {
+      return [];
+    }
+
+    const filtered = rooms.filter((r) => {
+      const matches =
+        r.location === locationId ||
+        (r as any).location_id === locationId ||
+        (r as any).location?.id === locationId;
+
+      return matches;
+    });
+
+    if (filtered.length === 0 && rooms.length > 0) {
+      return rooms;
+    }
+
+    return filtered;
   }, [rooms, locationId]);
 
   const handleSubmit = useCallback(async () => {
@@ -94,23 +109,17 @@ export function BookingModal({ open, onClose }: BookingModalProps) {
 
       const isValid = await form.trigger();
       if (!isValid) {
-        const errors = form.formState.errors;
-        console.log("Erros de validação:", errors);
         toast.error("Preencha todos os campos obrigatórios corretamente");
         return;
       }
 
       const formData = form.getValues();
-      console.log("Dados do formulário:", formData);
 
       const result = await smartBookingApi.createBookingWithResources(formData);
 
-      console.log("Booking criado com sucesso:", result);
       toast.success("Reserva criada com sucesso!");
       handleClose();
     } catch (error) {
-      console.error("Erro ao criar reserva:", error);
-
       if (error instanceof Error) {
         if (error.message.includes("400")) {
           toast.error("Dados inválidos. Verifique os campos e tente novamente.");

@@ -52,7 +52,6 @@ export class AuthService {
 
       return result;
     } catch (error) {
-      console.error("Erro no login:", error);
       return {
         success: false,
         message: error instanceof Error ? error.message : "Erro inesperado no login",
@@ -81,7 +80,6 @@ export class AuthService {
 
       return result;
     } catch (error) {
-      console.error("Erro no registro:", error);
       return {
         success: false,
         message: error instanceof Error ? error.message : "Erro inesperado no registro",
@@ -106,7 +104,6 @@ export class AuthService {
 
       return result;
     } catch (error) {
-      console.error("Erro ao enviar email:", error);
       return {
         success: false,
         message: error instanceof Error ? error.message : "Erro inesperado",
@@ -128,7 +125,6 @@ export class AuthService {
         });
       }
     } catch (error) {
-      console.error("Erro no logout:", error);
     } finally {
       // Limpar dados locais sempre
       localStorage.removeItem("auth_token");

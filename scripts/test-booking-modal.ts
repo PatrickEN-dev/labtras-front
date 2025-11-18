@@ -20,12 +20,9 @@ interface BookingTestData {
 }
 
 async function testBookingCreation() {
-  console.log("🧪 TESTE DO MODAL DE BOOKING");
-  console.log("=".repeat(50));
 
   try {
     // 1. Obter dados padrão (como o modal faz)
-    console.log("\n📋 1. Obtendo dados padrão...");
 
     const [locationResponse, managerResponse, roomResponse] = await Promise.all([
       fetch(`${API_BASE_URL}/locations/get-or-create-default/`, { method: "POST" }),
@@ -37,12 +34,8 @@ async function testBookingCreation() {
     const managerData = await managerResponse.json();
     const roomData = await roomResponse.json();
 
-    console.log("✅ Location:", locationData.location.name);
-    console.log("✅ Manager:", managerData.manager.name);
-    console.log("✅ Room:", roomData.room.name);
 
     // 2. Criar booking (como o modal fez após os ajustes)
-    console.log("\n📅 2. Criando booking...");
 
     const now = new Date();
     const tomorrow = new Date(now);
@@ -65,7 +58,6 @@ async function testBookingCreation() {
       coffee_description: "Café e biscoitos para reunião",
     };
 
-    console.log("Dados do booking:", JSON.stringify(bookingData, null, 2));
 
     const bookingResponse = await fetch(`${API_BASE_URL}/bookings/`, {
       method: "POST",
@@ -81,30 +73,19 @@ async function testBookingCreation() {
     }
 
     const booking = await bookingResponse.json();
-    console.log("✅ Booking criado:", booking.id.substring(0, 8) + "...");
 
     // 3. Verificar o booking criado
-    console.log("\n🔍 3. Verificando booking...");
     const verifyResponse = await fetch(`${API_BASE_URL}/bookings/${booking.id}/`);
     const verifyData = await verifyResponse.json();
 
-    console.log("📋 Detalhes do booking:");
-    console.log(`   - ID: ${verifyData.id.substring(0, 8)}...`);
-    console.log(`   - Status: ${verifyData.status}`);
-    console.log(`   - Purpose: ${verifyData.purpose}`);
     if (verifyData.room_name) {
-      console.log(`   - Room: ${verifyData.room_name}`);
     }
     if (verifyData.manager_name) {
-      console.log(`   - Manager: ${verifyData.manager_name}`);
     }
 
-    console.log("\n🎉 TESTE CONCLUÍDO COM SUCESSO!");
-    console.log("✅ Modal está pronto para criar bookings!");
 
     return true;
   } catch (error) {
-    console.error("\n❌ ERRO NO TESTE:", error);
     return false;
   }
 }

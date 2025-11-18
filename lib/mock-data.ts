@@ -26,23 +26,6 @@ export interface Manager {
   updated_at: string;
 }
 
-export interface Booking {
-  id: string;
-  room: string;
-  manager: string;
-  start_date: string;
-  end_date: string;
-  coffee_option: boolean;
-  coffee_quantity?: number;
-  coffee_description?: string;
-  room_name?: string;
-  room_location?: string;
-  manager_name?: string;
-  manager_email?: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export const MOCK_LOCATIONS: Location[] = [
   {
     id: "loc-1",
@@ -154,37 +137,6 @@ export const MOCK_MANAGERS: Manager[] = [
   },
 ];
 
-export const MOCK_BOOKINGS: Booking[] = [
-  {
-    id: "booking-1",
-    room: "room-1",
-    manager: "mgr-1",
-    start_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    end_date: new Date(Date.now() + 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000).toISOString(),
-    coffee_option: true,
-    coffee_quantity: 10,
-    coffee_description: "Café especial",
-    room_name: "Sala de Reunião A",
-    manager_name: "João Silva",
-    manager_email: "joao.silva@empresa.com",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "booking-2",
-    room: "room-2",
-    manager: "mgr-2",
-    start_date: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
-    end_date: new Date(Date.now() + 48 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000).toISOString(),
-    coffee_option: false,
-    room_name: "Sala de Reunião B",
-    manager_name: "Maria Santos",
-    manager_email: "maria.santos@empresa.com",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
-
 export const getMockLocations = async (): Promise<Location[]> => {
   await new Promise((resolve) => setTimeout(resolve, 300));
   return MOCK_LOCATIONS;
@@ -218,35 +170,4 @@ export const getMockManagers = async (): Promise<Manager[]> => {
 export const getMockManagerById = async (id: string): Promise<Manager | null> => {
   await new Promise((resolve) => setTimeout(resolve, 300));
   return MOCK_MANAGERS.find((manager) => manager.id === id) || null;
-};
-
-export const getMockBookings = async (): Promise<Booking[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return MOCK_BOOKINGS;
-};
-
-export const getMockBookingById = async (id: string): Promise<Booking | null> => {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return MOCK_BOOKINGS.find((booking) => booking.id === id) || null;
-};
-
-export const createMockBooking = async (data: Partial<Booking>): Promise<Booking> => {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  const newBooking: Booking = {
-    id: `booking-${Date.now()}`,
-    room: data.room || "",
-    manager: data.manager || "",
-    start_date: data.start_date || new Date().toISOString(),
-    end_date: data.end_date || new Date().toISOString(),
-    coffee_option: data.coffee_option || false,
-    coffee_quantity: data.coffee_quantity,
-    coffee_description: data.coffee_description,
-    room_name: data.room_name,
-    manager_name: data.manager_name,
-    manager_email: data.manager_email,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
-  MOCK_BOOKINGS.push(newBooking);
-  return newBooking;
 };
