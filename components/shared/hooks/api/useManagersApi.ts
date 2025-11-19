@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { getMockManagers, MOCK_MANAGERS, type Manager } from "@/lib/mock-data";
-import useApi from "@/components/generic-components/hooks/useApi";
+import useApi from "../useApi";
 
 interface ManagerQueryParams {
   search?: string;
@@ -39,8 +39,7 @@ const useManagersApi = () => {
         if (realManagers && realManagers.length > 0) {
           return realManagers;
         }
-      } catch (error) {
-      }
+      } catch {}
 
       const managers = await getMockManagers();
 
@@ -69,7 +68,7 @@ const useManagersApi = () => {
         // Tentar API real primeiro
         const manager = await api.get<Manager>(`/managers/${id}/`);
         return manager;
-      } catch (error) {
+      } catch {
         // Fallback para dados mockados
         const manager = MOCK_MANAGERS.find((m: Manager) => m.id === id);
         if (!manager) {
@@ -87,7 +86,7 @@ const useManagersApi = () => {
         // Tentar criar via API real
         const newManager = await api.post<Manager>("/managers/", data);
         return newManager;
-      } catch (error) {
+      } catch {
         // Fallback - simular criação
         const newManager: Manager = {
           id: `mgr-${Date.now()}`,

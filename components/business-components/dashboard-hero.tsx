@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { HeroSection } from "@/components/generic-components/hero-section";
-import { ActionButton } from "@/components/generic-components/action-button";
 import { BookingModal } from "./booking-modal";
 import { Plus, Calendar } from "lucide-react";
+import { ActionButton } from "../ui-base/action-button";
+import { HeroSection } from "../layout/hero-section";
 
 export function DashboardHero() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);

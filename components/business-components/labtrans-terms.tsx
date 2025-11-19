@@ -1,4 +1,4 @@
-import { TermsModal } from "@/components/generic-components/terms-modal";
+import { TermsModal } from "@/components/ui-base/terms-modal";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 
@@ -12,8 +12,7 @@ export function LabTransTerms({ variant = "link", className = "" }: LabTransTerm
     localStorage.setItem("termos-aceitos", new Date().toISOString());
   };
 
-  const handleCancel = () => {
-  };
+  const handleCancel = () => {};
 
   const triggerElement =
     variant === "button" ? (

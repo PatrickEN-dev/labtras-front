@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import useApi from "@/components/generic-components/hooks/useApi";
+import useApi from "@/components/shared/hooks/useApi";
 import { MOCK_LOCATIONS, MOCK_ROOMS, MOCK_MANAGERS } from "@/lib/mock-data";
 import type { Location, Room, Manager } from "@/lib/mock-data";
 
@@ -37,8 +37,7 @@ const useDefaultData = () => {
           roomId: roomResponse.room!.id,
         },
       };
-    } catch (error) {
-
+    } catch {
       // Fallback para dados mockados
       return {
         locations: MOCK_LOCATIONS,

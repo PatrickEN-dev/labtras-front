@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import useApi from "@/components/generic-components/hooks/useApi";
 import type { BookingFormData } from "@/lib/booking-schemas";
+import useApi from "../useApi";
 
 interface DefaultResourceResponse<T> {
   created: boolean;
@@ -29,25 +29,20 @@ const useSmartBookingCreation = () => {
         manager: false,
       };
 
-      let actualLocationId = formData.locationId;
       let actualRoomId = formData.roomId;
       let actualManagerId = formData.managerId;
 
       try {
         if (formData.customLocation) {
-          const newLocation = await api.post<any>("/locations/", {
+          await api.post<any>("/locations/", {
             name: formData.customLocation,
             address: "Endereço a ser definido",
             description: "Localização customizada criada automaticamente",
           });
-          actualLocationId = newLocation.id;
         } else {
           if (!formData.locationId || formData.locationId.startsWith("loc-")) {
-            const defaultLocationResponse = await api.post<DefaultResourceResponse<any>>(
-              "/locations/get-or-create-default/",
-              {}
-            );
-            actualLocationId = defaultLocationResponse.location!.id;
+            await api.post<DefaultResourceResponse<any>>("/locations/get-or-create-default/", {});
+
             usedDefaults.location = true;
           }
         }

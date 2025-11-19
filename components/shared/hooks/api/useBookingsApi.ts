@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import useApi from "@/components/generic-components/hooks/useApi";
+import useApi from "../useApi";
 
 interface BookingQueryParams {
   room_id?: string;
@@ -11,8 +11,11 @@ interface BookingQueryParams {
 interface CreateBookingData {
   room: string;
   manager: string;
-  start_date: string;
-  end_date: string;
+  start_datetime: string;
+  end_datetime: string;
+  name?: string;
+  description?: string;
+  purpose?: string;
   coffee_option?: boolean;
   coffee_quantity?: number;
   coffee_description?: string;
@@ -38,7 +41,7 @@ const useBookingsApi = () => {
 
         const bookings = await api.get<Booking[]>(`/bookings${buildQueryString(params)}`);
         return bookings;
-      } catch (error) {
+      } catch {
         return [];
       }
     },
@@ -50,7 +53,7 @@ const useBookingsApi = () => {
       try {
         const booking = await api.get<Booking>(`/bookings/${id}/`);
         return booking;
-      } catch (error) {
+      } catch {
         throw new Error("Booking não encontrado na API");
       }
     },
@@ -62,7 +65,7 @@ const useBookingsApi = () => {
       try {
         const booking = await api.post<Booking>("/bookings/", data);
         return booking;
-      } catch (error) {
+      } catch {
         throw new Error("Não foi possível criar o booking");
       }
     },
@@ -72,9 +75,15 @@ const useBookingsApi = () => {
   const updateBooking = useCallback(
     async (id: string, data: UpdateBookingData): Promise<Booking> => {
       try {
+        console.log("Atualizando booking com ID:", id);
+        console.log("Dados para atualização:", data);
+
         const booking = await api.put<Booking>(`/bookings/${id}/`, data);
+
+        console.log("Booking atualizado com sucesso:", booking);
         return booking;
       } catch (error) {
+        console.error("Erro ao atualizar booking:", error);
         throw new Error("Não foi possível atualizar o booking");
       }
     },
@@ -85,7 +94,7 @@ const useBookingsApi = () => {
     async (id: string): Promise<void> => {
       try {
         await api.delete<void>(`/bookings/${id}/`);
-      } catch (error) {
+      } catch {
         throw new Error("Não foi possível deletar o booking");
       }
     },

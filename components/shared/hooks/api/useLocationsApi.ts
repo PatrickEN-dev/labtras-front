@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { getMockLocations, MOCK_LOCATIONS, type Location as MockLocation } from "@/lib/mock-data";
-import useApi from "@/components/generic-components/hooks/useApi";
+import useApi from "../useApi";
 
 interface LocationQueryParams {
   search?: string;
@@ -32,10 +32,8 @@ const useLocationsApi = () => {
         if (realLocations && realLocations.length > 0) {
           return realLocations;
         }
-      } catch (error) {
-      }
+      } catch {}
 
-      // Fallback para dados mockados
       let locations = await getMockLocations();
 
       if (params.search) {
@@ -51,7 +49,6 @@ const useLocationsApi = () => {
 
   const getLocation = useCallback(
     async (id: string): Promise<MockLocation> => {
-
       const mockLocation = MOCK_LOCATIONS.find((l) => l.id === id);
       if (mockLocation) {
         return mockLocation;

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { getMockRoomsByLocation, getMockAllRooms, MOCK_ROOMS, type Room } from "@/lib/mock-data";
-import useApi from "@/components/generic-components/hooks/useApi";
+import useApi from "../useApi";
 
 interface RoomQueryParams {
   location_id?: string;
@@ -45,8 +45,7 @@ const useRoomsApi = () => {
         if (realRooms && realRooms.length > 0) {
           return realRooms;
         }
-      } catch (error) {
-      }
+      } catch {}
 
       // Fallback para dados mockados se API falhou ou não tem dados
       let rooms: Room[];
@@ -75,8 +74,7 @@ const useRoomsApi = () => {
       try {
         const room = await api.get<Room>(`/rooms/${id}/`);
         return room;
-      } catch (error) {
-
+      } catch {
         const room = MOCK_ROOMS.find((r) => r.id === id);
         if (!room) {
           throw new Error("Room not found");
@@ -92,8 +90,7 @@ const useRoomsApi = () => {
       try {
         const newRoom = await api.post<Room>("/rooms/", data);
         return newRoom;
-      } catch (error) {
-
+      } catch {
         const newRoom: Room = {
           id: `room-${Date.now()}`,
           ...data,
@@ -119,7 +116,7 @@ const useRoomsApi = () => {
     [getRoom]
   );
 
-  const deleteRoom = useCallback(async (id: string): Promise<void> => {
+  const deleteRoom = useCallback(async (): Promise<void> => {
     return new Promise((resolve) => setTimeout(() => resolve(), 200));
   }, []);
 

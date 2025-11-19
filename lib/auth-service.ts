@@ -24,9 +24,7 @@ export interface ApiError {
   statusCode?: number;
 }
 
-// Serviços de autenticação
 export class AuthService {
-  // Login com email/senha
   static async login(data: LoginFormData): Promise<AuthResponse> {
     try {
       const response = await apiRequest(API_CONFIG.ENDPOINTS.LOGIN, {
@@ -44,7 +42,6 @@ export class AuthService {
         throw new Error(result.message || "Erro ao fazer login");
       }
 
-      // Salvar token no localStorage se remember = true
       if (data.remember && result.data?.token) {
         localStorage.setItem("auth_token", result.data.token);
         localStorage.setItem("user_data", JSON.stringify(result.data.user));
@@ -60,7 +57,6 @@ export class AuthService {
     }
   }
 
-  // Registro de novo usuário
   static async register(data: RegisterFormData): Promise<AuthResponse> {
     try {
       const response = await apiRequest(API_CONFIG.ENDPOINTS.REGISTER, {
@@ -88,7 +84,6 @@ export class AuthService {
     }
   }
 
-  // Esqueceu a senha
   static async forgotPassword(email: string): Promise<AuthResponse> {
     try {
       const response = await apiRequest(API_CONFIG.ENDPOINTS.FORGOT_PASSWORD, {
@@ -112,47 +107,39 @@ export class AuthService {
     }
   }
 
-  // Logout
   static async logout(): Promise<void> {
     try {
       const token = localStorage.getItem("auth_token");
 
       if (token) {
-        // Opcional: chamar endpoint de logout no backend
         await apiRequest("/auth/logout", {
           method: "POST",
           headers: getAuthHeaders(token),
         });
       }
-    } catch (error) {
+    } catch {
     } finally {
-      // Limpar dados locais sempre
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
     }
   }
 
-  // Verificar se usuário está autenticado
   static isAuthenticated(): boolean {
     return !!localStorage.getItem("auth_token");
   }
 
-  // Obter dados do usuário logado
   static getCurrentUser(): { id: string; name: string; email: string } | null {
     const userData = localStorage.getItem("user_data");
     return userData ? JSON.parse(userData) : null;
   }
 
-  // Obter token de autenticação
   static getToken(): string | null {
     return localStorage.getItem("auth_token");
   }
 }
 
-// Funções para autenticação social (para implementação futura)
 export class SocialAuthService {
   static async loginWithGoogle(): Promise<AuthResponse> {
-    // Implementar integração com Google OAuth
     return {
       success: false,
       message: "Autenticação com Google em desenvolvimento",
@@ -161,7 +148,6 @@ export class SocialAuthService {
   }
 
   static async loginWithGitHub(): Promise<AuthResponse> {
-    // Implementar integração com GitHub OAuth
     return {
       success: false,
       message: "Autenticação com GitHub em desenvolvimento",

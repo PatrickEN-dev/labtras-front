@@ -1,7 +1,7 @@
 "use client";
 
-import { Header } from "@/components/generic-components/header";
-import { Footer } from "@/components/generic-components/footer";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 import { DashboardHero } from "@/components/business-components/dashboard-hero";
 import { DashboardStats } from "@/components/business-components/dashboard-stats";
 import { UpcomingMeetings } from "@/components/business-components/upcoming-meetings";

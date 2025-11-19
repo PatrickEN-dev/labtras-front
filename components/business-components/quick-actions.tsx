@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ActionButton } from "@/components/generic-components/action-button";
 import { BookingModal } from "./booking-modal";
 import { Plus, Calendar, MapPin, BarChart3, List } from "lucide-react";
+import { ActionButton } from "@/components/ui-base/action-button";
 
 export function QuickActions() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);

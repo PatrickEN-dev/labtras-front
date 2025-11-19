@@ -24,6 +24,45 @@ export const dateTimeSchema = z
   })
   .refine(
     (data) => {
+      if (data.date) {
+        const selectedDate = new Date(data.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return selectedDate >= today;
+      }
+      return true;
+    },
+    {
+      message: "A data deve ser hoje ou no futuro",
+      path: ["date"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.date && data.startTime) {
+        const selectedDate = new Date(data.date);
+        const today = new Date();
+
+        if (selectedDate.toDateString() === today.toDateString()) {
+          const [hours, minutes] = data.startTime.split(":").map(Number);
+          const selectedDateTime = new Date();
+          selectedDateTime.setHours(hours, minutes, 0, 0);
+
+          const minimumTime = new Date();
+          minimumTime.setMinutes(minimumTime.getMinutes() + 15);
+
+          return selectedDateTime >= minimumTime;
+        }
+      }
+      return true;
+    },
+    {
+      message: "Para hoje, selecione um horário com pelo menos 15 minutos de antecedência",
+      path: ["startTime"],
+    }
+  )
+  .refine(
+    (data) => {
       if (data.startTime && data.endTime) {
         const start = parseInt(data.startTime.replace(":", ""));
         const end = parseInt(data.endTime.replace(":", ""));
@@ -95,6 +134,32 @@ export const fullBookingSchema = z
   )
   .refine(
     (data) => {
+      if (data.date && data.startTime) {
+        const selectedDate = new Date(data.date);
+        const today = new Date();
+
+        // Se a data selecionada for hoje, verificar se o horário é futuro
+        if (selectedDate.toDateString() === today.toDateString()) {
+          const [hours, minutes] = data.startTime.split(":").map(Number);
+          const selectedDateTime = new Date();
+          selectedDateTime.setHours(hours, minutes, 0, 0);
+
+          // Adicionar margem de 15 minutos para dar tempo de preparação
+          const minimumTime = new Date();
+          minimumTime.setMinutes(minimumTime.getMinutes() + 15);
+
+          return selectedDateTime >= minimumTime;
+        }
+      }
+      return true;
+    },
+    {
+      message: "Para hoje, selecione um horário com pelo menos 15 minutos de antecedência",
+      path: ["startTime"],
+    }
+  )
+  .refine(
+    (data) => {
       if (data.startTime && data.endTime) {
         const start = parseInt(data.startTime.replace(":", ""));
         const end = parseInt(data.endTime.replace(":", ""));
@@ -104,6 +169,31 @@ export const fullBookingSchema = z
     },
     {
       message: "Horário de fim deve ser posterior ao horário de início",
+      path: ["endTime"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.date && data.endTime) {
+        const selectedDate = new Date(data.date);
+        const today = new Date();
+
+        // Se a data selecionada for hoje, verificar se o horário de fim também é futuro
+        if (selectedDate.toDateString() === today.toDateString()) {
+          const [hours, minutes] = data.endTime.split(":").map(Number);
+          const selectedDateTime = new Date();
+          selectedDateTime.setHours(hours, minutes, 0, 0);
+
+          const minimumTime = new Date();
+          minimumTime.setMinutes(minimumTime.getMinutes() + 30); // 30 min para reunião mínima
+
+          return selectedDateTime >= minimumTime;
+        }
+      }
+      return true;
+    },
+    {
+      message: "Para hoje, o horário de término deve permitir pelo menos 30 minutos de reunião",
       path: ["endTime"],
     }
   )

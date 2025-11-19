@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
-import { StatsCard } from "@/components/generic-components/stats-card";
+import React from "react";
+import { StatCard } from "@/components/data-display/stat-card";
 import { Clock, MapPin, Users, Coffee } from "lucide-react";
-import useBookingsApi from "./hooks/api/useBookingsApi";
-import useRoomsApi from "./hooks/api/useRoomsApi";
+import useBookingsApi from "@/components/shared/hooks/api/useBookingsApi";
+import useRoomsApi from "@/components/shared/hooks/api/useRoomsApi";
 import type { Room } from "@/lib/mock-data";
 
 interface DashboardStatsData {
@@ -53,7 +54,6 @@ export function DashboardStats() {
   const bookingsApi = useBookingsApi();
   const roomsApi = useRoomsApi();
 
-  // Memorizar a data de hoje para evitar recálculos
   const today = useMemo(() => getTodayDateString(), []);
 
   useEffect(() => {
@@ -62,7 +62,6 @@ export function DashboardStats() {
         setIsLoading(true);
         setError(null);
 
-        // Fazer as duas requisições em paralelo para melhor performance
         const [todayBookings, allRooms] = await Promise.all([
           bookingsApi.getBookings({
             start_date: today,
@@ -71,7 +70,6 @@ export function DashboardStats() {
           roomsApi.getRooms(),
         ]);
 
-        // Calcular estatísticas usando funções auxiliares
         const activeBookings = getCurrentActiveBookings(todayBookings);
         const activeParticipants = calculateActiveParticipants(todayBookings);
         const coffeeOrders = calculateCoffeeOrders(todayBookings);
@@ -84,7 +82,7 @@ export function DashboardStats() {
           activeParticipants,
           coffeeOrders,
         });
-      } catch (err) {
+      } catch {
         setError("Erro ao carregar dados");
       } finally {
         setIsLoading(false);
@@ -92,8 +90,7 @@ export function DashboardStats() {
     };
 
     loadDashboardData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [today]);
+  }, []); // Remover dependências problemáticas
 
   const displayValue = (value: number): string | number => {
     if (isLoading) return "...";
@@ -102,38 +99,36 @@ export function DashboardStats() {
   };
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-      <StatsCard
+      <StatCard
         title="Reuniões Hoje"
         value={displayValue(stats.meetingsToday)}
         description={error ? "Erro ao carregar" : "agendadas"}
         icon={Clock}
-        iconColor="text-blue-600"
-        changeColor="text-green-600"
+        color="blue"
       />
 
-      <StatsCard
+      <StatCard
         title="Salas Disponíveis"
         value={displayValue(stats.availableRooms)}
         description={error ? "Erro ao carregar" : `de ${stats.totalRooms} total`}
         icon={MapPin}
-        iconColor="text-green-600"
+        color="green"
       />
 
-      <StatsCard
+      <StatCard
         title="Participantes"
         value={displayValue(stats.activeParticipants)}
         description={error ? "Erro ao carregar" : "estimados hoje"}
         icon={Users}
-        iconColor="text-purple-600"
+        color="purple"
       />
 
-      <StatsCard
+      <StatCard
         title="Café Solicitado"
         value={displayValue(stats.coffeeOrders)}
         description={error ? "Erro ao carregar" : "copos hoje"}
         icon={Coffee}
-        iconColor="text-amber-600"
-        changeColor="text-amber-600"
+        color="yellow"
       />
     </div>
   );

@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
-import LucideIcon from "../generic-components/lucide-icon";
+import LucideIcon from "../ui-base/lucide-icon";
 
 const Dialog = ({ ...props }: DialogPrimitive.DialogProps) => {
   React.useEffect(() => {
